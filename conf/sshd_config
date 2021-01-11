@@ -1,0 +1,10 @@
+
+PubkeyAuthentication yes
+PermitRootLogin yes
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+UsePAM yes
+Subsystem  sftp /usr/lib/openssh/sftp-server
+
+
+
