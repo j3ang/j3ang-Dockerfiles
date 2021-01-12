@@ -19,10 +19,16 @@ ADD /conf/sshd.conf /etc/supervisor/conf.d/sshd.conf
 
 
 # ==============================================
-# * @Desc: Enable password access
+# * @Desc: Allow Root Login
 # ==============================================
 RUN rpl "PermitRootLogin without-password" "PermitRootLogin yes" /etc/ssh/sshd_config
-RUN rpl "#PasswordAuthentication yes" "PasswordAuthentication yes" /etc/ssh/sshd_config
+
+
+# ==============================================
+# * @Desc: Enable password access
+# ==============================================
+RUN rpl "#PasswordAuthentication yes" "PasswordAuthentication no" /etc/ssh/sshd_config
+RUN rpl "#AuthorizedKeysFile	%h/.ssh/authorized_keys" "AuthorizedKeysFile	%h/.ssh/authorized_keys" /etc/ssh/sshd_config
 
 
 # =========================================
@@ -32,8 +38,9 @@ RUN rpl "#PasswordAuthentication yes" "PasswordAuthentication yes" /etc/ssh/sshd
 RUN mkdir /root/.ssh
 RUN chmod o-rwx /root/.ssh
 
+ADD /pubKeys /pubKeys
 RUN touch /root/.ssh/authorized_keys
-RUN for f in /pubKeys/*.pub; do (cat $f; echo '') >> /root/.ssh/authorized_keys; done
+RUN for f in /pubKeys/*.pub; do (cat $f; echo "") >> /root/.ssh/authorized_keys; done
 
 # Replace docker image sshd_config 
 RUN rpl "#PubkeyAuthentication yes" "PubkeyAuthentication yes" /etc/ssh/sshd_config
